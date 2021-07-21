@@ -1,8 +1,9 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password, check_password
-from graphicdesignapp.models import User
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 import re
 
 # Create your views here.
@@ -22,26 +23,34 @@ def check(email):
 
 def register(request):
     if request.method == "POST":
-        name = request.POST['name']
+        username = request.POST['username']
+        firstname = request.POST['firstname']
+        lastname = request.POST['lastname']
         email = request.POST['email']
         password = request.POST['password']
-        if len(name) >= 5 and check(email) and len(password) >= 8:
-            user = User.objects.all().filter(email=email)
+        if len(username) >= 5 and check(email) and len(password) >= 8 and len(firstname) >= 5 and len(lastname) >= 5:
+            isUserPresent = User.objects.all().filter(username=username).exists()
             # Check if email exist
-            if user:
-                messages.error(request, "User with Email Exist")
+            if isUserPresent:
+                messages.error(request, "User with username Exist")
                 return redirect('register')
-            user = User()
-            user.name = name
-            user.password = make_password(password)
-            user.email = email
-            user.save()
+            createdUser = User.objects.create(
+                username=username, email=email, password=make_password(password))
+            createdUser.first_name = firstname
+            createdUser.last_name = lastname
+            createdUser.save()
             # messages.success(request, "User Registered Successfully")
             return redirect('login')
         else:
-            if len(name) < 5:
+            if len(username) < 5:
                 messages.error(
-                    request, "Name should be atleast 5 characters long and not empty", )
+                    request, "UserName should be atleast 5 characters long and not empty")
+            if len(firstname) < 5:
+                messages.error(
+                    request, "Firstname should be atleast 5 characters long and not empty")
+            if len(lastname) < 5:
+                messages.error(
+                    request, "Lastname should be atleast 5 characters long and not empty")
             if not check(email):
                 messages.error(request, "Email must be an email")
             if len(password) < 8:
@@ -50,24 +59,22 @@ def register(request):
     return render(request, 'register.html')
 
 
-def login(request):
+def handleLogin(request):
     if request.method == "POST":
-        email = request.POST['email']
+        username = request.POST['username']
         password = request.POST['password']
-        if check(email) and len(password) >= 8:
-            user = User.objects.all().filter(email=email).first()
-            if user:
-                if check_password(password, user.password):
-                    return redirect('dashboard')
-                else:
-                    messages.error(request, "Incorrect Password")
-                    return redirect('login')
+        if len(username) > 0 and len(password) >= 8:
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, "Login Successfull")
+                return redirect('dashboard')
             else:
-                messages.error(request, "Invalid Credentials")
-                return redirect('login')
+                messages.error(
+                    request, "Invalid Credentials, Please Try again...")
         else:
-            if not check(email):
-                messages.error(request, "Email must be an email")
+            if len(username) == 0:
+                messages.error(request, "Username cannot be empty")
             if len(password) == 0:
                 messages.error(request, "Password Cannot Be Empty")
     return render(request, 'login.html')
@@ -77,5 +84,7 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 
-def logout(request):
-    return HttpResponse(content="logout")
+def handleLogout(request):
+    logout(request)
+    messages.success(request, "Logout success")
+    return redirect('dashboard')
