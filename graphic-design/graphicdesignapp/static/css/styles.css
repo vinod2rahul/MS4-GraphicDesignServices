@@ -1,0 +1,20 @@
+body{
+    margin: 0;
+    padding : 0;
+}
+
+.card-body:hover p{
+    color: #1dbf73;
+}
+
+.card-image{
+    object-fit: fill;
+}
+
+.card-header{
+    display: flex;
+}
+
+#desc{
+    text-overflow: ellipsis;
+}

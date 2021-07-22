@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from graphicdesignapp.models import Design
+from django.core import serializers
+from django.http.response import JsonResponse
 import re
 
 # Create your views here.
@@ -78,6 +81,12 @@ def handleLogin(request):
             if len(password) == 0:
                 messages.error(request, "Password Cannot Be Empty")
     return render(request, 'login.html')
+
+
+def getdesigns(request):
+    designs = Design.objects.all()
+    serialized_data = serializers.serialize('python', designs)
+    return JsonResponse(serialized_data, safe=False)
 
 
 def dashboard(request):
