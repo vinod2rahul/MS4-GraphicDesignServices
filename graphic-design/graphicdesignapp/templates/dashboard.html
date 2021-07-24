@@ -14,7 +14,15 @@
     {% endfor %}
 </ul>
 {% endif %}
-<h4>Designs You May Like</h4>
+<div class="d-flex justify-content-between">
+    <h4>Designs You May Like</h4>
+    <button class="btn btn-info">Request A Design</button>
+</div>
+<hr>
+<div class="form-group">
+    <input type="text" class="form-control" id="filtertext" oninput="filterDesigns()"
+        placeholder="Filter Designs By Category..." />
+</div>
 <div class="row" id="designs">
 </div>
 {% endblock %}

@@ -1,3 +1,5 @@
+let designs;
+
 function truncate(str, len) {
   if (str.length > len && str.length > 0) {
     let new_str = str + " ";
@@ -9,10 +11,9 @@ function truncate(str, len) {
   return str;
 }
 
-async function getDesign() {
+async function listDesignsInUI(param) {
   try {
-    const res = await axios.get("/accounts/designs/");
-    const designs = res.data;
+    designs = param;
     const DOMdesigns = document.getElementById("designs");
     designs.forEach((design) => {
       const col = document.createElement("div");
@@ -31,6 +32,9 @@ async function getDesign() {
       const header = document.createElement("div");
       header.classList.add("card-header");
 
+      const sellerData = document.createElement("span");
+      sellerData.classList.add("seller-info");
+
       const sellerImageContainer = document.createElement("span");
 
       const sellerImage = document.createElement("img");
@@ -41,7 +45,7 @@ async function getDesign() {
         "https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg";
 
       sellerImageContainer.appendChild(sellerImage);
-      header.appendChild(sellerImageContainer);
+      sellerData.appendChild(sellerImageContainer);
 
       const sellerInfo = document.createElement("span");
       sellerInfo.classList.add("mx-2");
@@ -57,7 +61,13 @@ async function getDesign() {
       sellerInfo.appendChild(sellerName);
       sellerInfo.appendChild(seller);
 
-      header.appendChild(sellerInfo);
+      const category = document.createElement("span");
+      category.classList.add("mt-3");
+      category.innerHTML = `<b>Category: </b> ${design.fields.category}`;
+
+      sellerData.appendChild(sellerInfo);
+      header.appendChild(sellerData);
+      header.appendChild(category);
       card.appendChild(header);
 
       const cardBody = document.createElement("div");
@@ -86,4 +96,42 @@ async function getDesign() {
   }
 }
 
-getDesign();
+function filterDesigns(e) {
+  const text = document.getElementById("filtertext").value;
+  if (text !== "") {
+    const filteredDesigns = designs.filter((design) => {
+      const regexp = new RegExp(`${text}`, "gi");
+      return design.fields.category.match(regexp);
+    });
+    // Keep track of old Designs
+    const oldDesigns = designs;
+    removeChildNodes();
+    listDesignsInUI(filteredDesigns);
+    // Assign all Designs so that the filtering happens on all Designs every time the input is changed
+    designs = oldDesigns;
+  } else {
+    removeChildNodes();
+    axios
+      .get("/accounts/designs/")
+      .then((res) => listDesignsInUI(res.data))
+      .catch((err) => {
+        console.error(err.message);
+      });
+  }
+}
+
+function removeChildNodes() {
+  const nodes = document.getElementById("designs");
+  while (nodes.hasChildNodes()) {
+    nodes.removeChild(nodes.firstChild);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  axios
+    .get("/accounts/designs/")
+    .then((res) => listDesignsInUI(res.data))
+    .catch((err) => {
+      console.error(err.message);
+    });
+});

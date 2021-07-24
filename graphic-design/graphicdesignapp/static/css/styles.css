@@ -13,6 +13,11 @@ body{
 
 .card-header{
     display: flex;
+    justify-content: space-between;
+}
+
+.seller-info{
+    display: flex;
 }
 
 #desc{
