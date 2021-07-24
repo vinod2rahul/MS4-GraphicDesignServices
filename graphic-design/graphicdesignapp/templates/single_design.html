@@ -1,0 +1,78 @@
+{% extends 'layouts/app.html'%}
+{% block title %}
+<title>Design Page</title>
+{% endblock %}
+{% if messages %}
+<ul style="list-style-type: none;">
+    {% for message in messages %}
+    <li {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible" {% endif %}>
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} Important: {% endif %}
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% block content %}
+<div class="row" id="single_design">
+    <h1 class="mb-5">{{ design.description }}</h1>
+    <div class="col-lg-8 col-md-7 col-sm-12">
+        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="d-block w-100" style="object-fit: contain;" height="427" src="{{ design.image }}"
+                        alt="First slide">
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+        <div class="mt-2">
+            <p class="lead"><b>About This Seller</b></p>
+            <mark>Before start the order ! Please Text ME </mark> to discuss the project details I am professional
+            Senior Front End
+            developer since 2019, In my professional career I have done more then 50 projects with different techniques
+            and using different technologies, I have strong grip on Bootstrap, React, JavaScript, Python and css3.If you
+            want to convert your PSD, XD, AI, Zeplin, Sketch, PNG or JPG file into responsive website you are at right
+            place and we can discuss the work and proceed.
+
+            Following are some of my core skills
+            <ol>
+                <li>HTML5</li>
+                <li>CSS3</li>
+                <li>Bootstrap</li>
+                <li>JavaScript</li>
+                <li>React</li>
+                <li>Python</li>
+                <li> Responsive template</li>
+            </ol>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-5 col-col-sm-12 card p-0" style="height: 350px;">
+        <div class="card-header text-center">
+            <p><b>Proceed with Payment</b></p>
+        </div>
+        <div class="card-body">
+            <span class="d-flex justify-content-between">
+                <span><b>Package</b></span>
+                <span><b>&#x20AC; {{ design.price }}</b></span>
+            </span>
+            <p class="mt-2">Here I am Offering a basic package plan feel free to contact me for more details</p>
+            <p class="mt-3">&#128337; 2 Days Delivery</p>
+            <ul class="list-group" style="list-style-type: none;">
+                <li class="text-success"><i class="fas fa-check text-success"></i> 1 Page Design</li>
+                <li class="text-success"><i class="fas fa-check text-success"></i> Responsive Design</li>
+            </ul>
+            <div class="d-grid gap-2 text-center">
+                <button class="btn btn-success btn-block mt-3">Continue(&#x20AC; {{ design.price }})</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

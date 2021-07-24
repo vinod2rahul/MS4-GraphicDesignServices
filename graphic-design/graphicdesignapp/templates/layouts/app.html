@@ -16,15 +16,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
         integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{% static '/css/styles.css' %}">
-    <script type="text/javascript" src="{% static '/js/index.js' %}"></script>
+    {% block script %}{% endblock %}
     {% block title %}{% endblock %}
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">GraphicDesign</a>
+            <a class="navbar-brand" href="{% url 'dashboard' %}">GraphicDesign</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">

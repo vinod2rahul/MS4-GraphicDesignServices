@@ -22,12 +22,15 @@ async function listDesignsInUI(param) {
       const card = document.createElement("div");
       card.classList.add("card");
 
+      const a = document.createElement("a");
+      a.href = `designs/${design.pk}`;
+
       const cardImage = document.createElement("img");
-      cardImage.classList.add("card-image");
+      cardImage.classList.add("card-image", "w-100");
       cardImage.height = 200;
       cardImage.src = design.fields.image;
-
-      card.appendChild(cardImage);
+      a.appendChild(cardImage);
+      card.appendChild(a);
 
       const header = document.createElement("div");
       header.classList.add("card-header");
@@ -75,6 +78,7 @@ async function listDesignsInUI(param) {
       cardBody.id = "desc";
 
       const desc = document.createElement("p");
+      desc.classList.add("desc");
       desc.innerHTML = truncate(design.fields.description, 50);
 
       cardBody.appendChild(desc);
@@ -93,6 +97,7 @@ async function listDesignsInUI(param) {
     });
   } catch (err) {
     console.error(err.message);
+    alert(err.message);
   }
 }
 

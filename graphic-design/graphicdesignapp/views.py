@@ -4,7 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.urls.conf import path
 from graphicdesignapp.models import Design
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http.response import JsonResponse
 import re
@@ -87,6 +89,14 @@ def getdesigns(request):
     designs = Design.objects.all()
     serialized_data = serializers.serialize('python', designs)
     return JsonResponse(serialized_data, safe=False)
+
+
+@login_required(login_url='/accounts/login')
+def getdesignsbyid(request, design_id):
+    design = Design.objects.get(id=design_id)
+    return render(request, 'single_design.html', {
+        'design': design
+    })
 
 
 def dashboard(request):

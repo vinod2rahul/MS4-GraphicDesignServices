@@ -3,12 +3,12 @@ body{
     padding : 0;
 }
 
-.card-body:hover p{
+.desc:hover{
     color: #1dbf73;
 }
 
 .card-image{
-    object-fit: fill;
+    object-fit: fill !important;
 }
 
 .card-header{
