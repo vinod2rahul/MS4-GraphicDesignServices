@@ -9,3 +9,6 @@ class Design(models.Model):
     category = models.CharField(max_length=80)
     description = models.TextField(blank=True)
     price = models.CharField(max_length=80)
+
+    def __str__(self):
+        return self.name
