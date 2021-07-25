@@ -69,9 +69,14 @@
                 <li class="text-success"><i class="fas fa-check text-success"></i> 1 Page Design</li>
                 <li class="text-success"><i class="fas fa-check text-success"></i> Responsive Design</li>
             </ul>
-            <div class="d-grid gap-2 text-center">
-                <button class="btn btn-success btn-block mt-3">Continue(&#x20AC; {{ design.price }})</button>
-            </div>
+            <form action="{% url 'create-checkout-session' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="order_id" value={{ design.id }}>
+                <div class="d-grid gap-2 text-center">
+                    <button class="btn btn-success btn-block mt-3" type="submit">
+                        Continue(&#x20AC; {{ design.price }})</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

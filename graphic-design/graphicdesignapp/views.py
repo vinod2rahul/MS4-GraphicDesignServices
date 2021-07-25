@@ -4,12 +4,19 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.urls.conf import path
-from graphicdesignapp.models import Design
+from django.views.decorators.csrf import csrf_exempt
+from graphicdesignapp.models import Design, Order
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.http import HttpResponse
 from django.http.response import JsonResponse
+from django.views import View
+import datetime
 import re
+import stripe
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # Create your views here.
 
@@ -107,3 +114,77 @@ def handleLogout(request):
     logout(request)
     messages.success(request, "Logout success")
     return redirect('dashboard')
+
+
+def PaymentSuccess(request):
+    messages.success(request, "Order SuccessFull")
+    return redirect('dashboard')
+
+
+def PaymentCanceled(request):
+    messages.error(request, "Order Canceled")
+    return redirect('dashboard')
+
+
+class CreateCheckOutSessionView(View):
+    def post(self, request, *args, **kwargs):
+        design = Design.objects.get(id=request.POST['order_id'])
+        YOUR_DOMAIN = "http://127.0.0.1:8000"
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': 'T-shirt',
+                        },
+                        'unit_amount': design.price,
+                    },
+                    'quantity': 1,
+                }],
+            metadata={
+                "design_id": design.id,
+                "username": request.user
+            },
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/success',
+            cancel_url=YOUR_DOMAIN + '/cancel',
+        )
+        return redirect(checkout_session.url, code=303)
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+
+    # Handle the checkout.session.completed event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        design_id = session["metadata"]["design_id"]
+        username = session["metadata"]["username"]
+        design = Design.objects.get(id=design_id)
+        order = Order()
+        order.category = design.category
+        user = User.objects.get(username=username)
+        order.user = user
+        order.design_id = design.id
+        order.price = design.price
+        order.is_paid = True
+        order.paid_at = datetime.datetime.now()
+        order.save()
+    # Passed signature verification
+    return HttpResponse(status=200)
