@@ -75,7 +75,7 @@ def handleLogin(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
-        if len(username) > 0 and len(password) >= 8:
+        if len(username) > 0 and len(password) > 0:
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
@@ -84,6 +84,7 @@ def handleLogin(request):
             else:
                 messages.error(
                     request, "Invalid Credentials, Please Try again...")
+                return redirect(to='login')
         else:
             if len(username) == 0:
                 messages.error(request, "Username cannot be empty")
@@ -96,6 +97,27 @@ def getdesigns(request):
     designs = Design.objects.all()
     serialized_data = serializers.serialize('python', designs)
     return JsonResponse(serialized_data, safe=False)
+
+
+@login_required(login_url='/accounts/login')
+def requestdesign(request):
+    # if request.method == 'POST':
+    #     size = request.POST['size']
+    #     category = request.POST['cat']
+    #     description = request.POST['desc']
+    #     if len(size) > 0 and len(category) > 0 and len(description) > 0:
+    #         createOrderView(user=request.user, category=category,
+    #                         size=size, description=description)
+    #     else:
+    #         if len(size) == 0:
+    #             messages.error(request, "Size Cannot be empty")
+    #         if len(category) == 0:
+    #             messages.error(
+    #                 request, "Category Must be either icon, logo or poster")
+    #         if len(description) == 0:
+    #             messages.error(request, "Description of the order is Required")
+    #         return redirect(to='requestdesign')
+    return render(request, 'request_design.html')
 
 
 @login_required(login_url='/accounts/login')
@@ -137,7 +159,7 @@ class CreateCheckOutSessionView(View):
                     'price_data': {
                         'currency': 'usd',
                         'product_data': {
-                            'name': 'T-shirt',
+                            'name': design.category,
                         },
                         'unit_amount': design.price,
                     },
@@ -152,6 +174,48 @@ class CreateCheckOutSessionView(View):
             cancel_url=YOUR_DOMAIN + '/cancel',
         )
         return redirect(checkout_session.url, code=303)
+
+
+class CreateOrderCheckOutSessionView(View):
+    def post(self, request, *args, **kwargs):
+        size = request.POST['size']
+        category = request.POST['cat']
+        description = request.POST['desc']
+        if len(size) > 0 and len(category) > 0 and len(description) > 0:
+            YOUR_DOMAIN = "http://127.0.0.1:8000"
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[
+                    {
+                        'price_data': {
+                            'currency': 'usd',
+                            'product_data': {
+                                'name': category,
+                            },
+                            'unit_amount': 250,
+                        },
+                        'quantity': 1,
+                    }],
+                metadata={
+                    "design_id": 5,
+                    "username": request.user,
+                    "size": size,
+                    "description": description
+                },
+                mode='payment',
+                success_url=YOUR_DOMAIN + '/success',
+                cancel_url=YOUR_DOMAIN + '/cancel',
+            )
+            return redirect(checkout_session.url, code=303)
+        else:
+            if len(size) == 0:
+                messages.error(request, "Size Cannot be empty")
+            if len(category) == 0:
+                messages.error(
+                    request, "Category Must be either icon, logo or poster")
+            if len(description) == 0:
+                messages.error(request, "Description of the order is Required")
+            return redirect(to='requestdesign')
 
 
 @csrf_exempt
@@ -176,11 +240,19 @@ def stripe_webhook(request):
         session = event['data']['object']
         design_id = session["metadata"]["design_id"]
         username = session["metadata"]["username"]
+        size = 0
+        description = "This is Description"
+        if session["metadata"].get("size") is not None:
+            size = session["metadata"].get("size")
+        if session["metadata"].get("description") is not None:
+            description = session["metadata"].get("description")
         design = Design.objects.get(id=design_id)
         order = Order()
         order.category = design.category
         user = User.objects.get(username=username)
         order.user = user
+        order.size = size
+        order.description = description
         order.design_id = design.id
         order.price = design.price
         order.is_paid = True

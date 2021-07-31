@@ -1,0 +1,37 @@
+{% extends 'layouts/app.html' %}
+{% block title %}
+<title>Request A Design</title>
+{% endblock %}
+{% block content %}
+{% if messages %}
+<ul style="list-style-type: none;">
+    {% for message in messages %}
+    <li {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible" {% endif %}>
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} Important: {% endif %}
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+<h1 class="mt-2">Request Design</h1>
+<form action="{% url 'create-order-checkout-session' %}" method="POST">
+    {% csrf_token %}
+    <div class="form-group mt-2">
+        <label for="size">Size :</label>
+        <input type="text" name="size" id="size" class="form-control mt-2" placeholder="Enter Size of icon" />
+    </div>
+    <div class="form-group mt-2">
+        <label for="cat">Category:</label>
+        <input type="text" name="cat" id="cat" class="form-control mt-2" placeholder="eg: icon, logo, poster" />
+    </div>
+    <div class="form-group mt-2">
+        <label for="desc">Description:</label>
+        <textarea rows="6" class="form-control mt-2" name="desc"
+            placeholder="Enter Description of the Order..."></textarea>
+    </div>
+    <div class="form-group mt-2">
+        <button type="submit" class="btn btn-warning">Submit</button>
+    </div>
+</form>
+{% endblock %}

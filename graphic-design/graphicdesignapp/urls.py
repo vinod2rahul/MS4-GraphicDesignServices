@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from graphicdesignapp.views import CreateCheckOutSessionView
+from graphicdesignapp.views import CreateCheckOutSessionView, CreateOrderCheckOutSessionView
 
 urlpatterns = [
     # path('', views.index, name="index"),
@@ -12,7 +12,10 @@ urlpatterns = [
     path('cancel/', views.PaymentCanceled, name="cancel"),
     path('accounts/designs/', views.getdesigns, name="designs"),
     path('designs/<design_id>', views.getdesignsbyid, name="design"),
+    path('request-design/', views.requestdesign, name="requestdesign"),
     path('accounts/logout/', views.handleLogout, name="logout"),
     path('create-checkout-session/', CreateCheckOutSessionView.as_view(),
          name="create-checkout-session"),
+    path('create-order-checkout-session/', CreateOrderCheckOutSessionView.as_view(),
+         name="create-order-checkout-session"),
 ]

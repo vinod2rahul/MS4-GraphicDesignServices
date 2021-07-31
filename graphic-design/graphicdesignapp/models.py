@@ -21,6 +21,9 @@ class Order(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, default=0)
     design_id = models.IntegerField()
     category = models.CharField(max_length=80)
+    size = models.CharField(max_length=80, blank=True)
+    description = models.CharField(
+        max_length=255, default='This is Description')
     price = models.IntegerField(default=0)
     is_paid = models.BooleanField(default=False)
     paid_at = models.DateTimeField()
@@ -28,4 +31,4 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.user.username)
