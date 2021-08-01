@@ -123,8 +123,16 @@ def requestdesign(request):
 @login_required(login_url='/accounts/login')
 def getdesignsbyid(request, design_id):
     design = Design.objects.get(id=design_id)
+    username = request.user
+    orders = Order.objects.all().filter(user=username)
+    is_paid = False
+    for order in orders:
+        if order.id == int(design_id):
+            is_paid = True
+            break
     return render(request, 'single_design.html', {
-        'design': design
+        'design': design,
+        'is_paid': is_paid
     })
 
 
