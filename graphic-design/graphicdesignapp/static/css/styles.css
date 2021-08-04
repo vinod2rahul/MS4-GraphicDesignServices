@@ -23,3 +23,17 @@ body{
 #desc{
     text-overflow: ellipsis;
 }
+
+.price-area{
+    display: inline-block;
+    border-width: 0px;
+    outline: 0;
+    width: 62px !important;
+    height: 28px;
+    line-height: 28px;
+    padding: 4px;
+    text-align: center;
+    border-radius: 7px;
+    background-color: #5bc0de;
+    cursor: not-allowed;
+}

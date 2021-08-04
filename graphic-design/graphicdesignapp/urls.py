@@ -7,6 +7,7 @@ urlpatterns = [
     path('accounts/register/', views.register, name="register"),
     path('accounts/login/', views.handleLogin, name="login"),
     path('', views.dashboard, name="dashboard"),
+    path('calculate-price/', views.calculatePrice, name="calculate"),
     path('webhook/', views.stripe_webhook, name="stripe_webhook"),
     path('success/', views.PaymentSuccess, name="success"),
     path('cancel/', views.PaymentCanceled, name="cancel"),

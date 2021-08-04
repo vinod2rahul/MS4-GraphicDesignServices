@@ -1,4 +1,5 @@
 {% extends 'layouts/app.html' %}
+{% load static %}
 {% block title %}
 <title>Request A Design</title>
 {% endblock %}
@@ -19,19 +20,60 @@
     {% csrf_token %}
     <div class="form-group mt-2">
         <label for="size">Size :</label>
-        <input type="text" name="size" id="size" class="form-control mt-2" placeholder="Enter Size of icon" />
+        <select class="form-select" name="size" id="size">
+            <option value="36">36</option>
+            <option value="42">42</option>
+            <option value="60">60</option>
+        </select>
+        <!-- <input type="text" name="size" id="size" class="form-control mt-2" placeholder="Enter Size of icon" /> -->
     </div>
     <div class="form-group mt-2">
         <label for="cat">Category:</label>
-        <input type="text" name="cat" id="cat" class="form-control mt-2" placeholder="eg: icon, logo, poster" />
+        <select class="form-select" name="cat" id="cat">
+            <option value="icon">icon</option>
+            <option value="poster">poster</option>
+            <option value="logo">logo</option>
+        </select>
+        <!-- <input type="text" name="cat" id="cat" class="form-control mt-2" placeholder="eg: icon, logo, poster" /> -->
     </div>
     <div class="form-group mt-2">
         <label for="desc">Description:</label>
         <textarea rows="6" class="form-control mt-2" name="desc"
             placeholder="Enter Description of the Order..."></textarea>
     </div>
+    <div class="form-group mt-2 d-flex align-baseline">
+        <span>Price: </span>
+        <input class="mx-2 price-area" id="design-price" name="price">
+    </div>
     <div class="form-group mt-2">
         <button type="submit" class="btn btn-warning">Submit</button>
+        <button type="button" class="btn btn-dark" id="calculate" data-bs-toggle="modal" data-bs-target="#priceModal">
+            Calculate Price
+        </button>
+        <div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="priceModalLabel">Total Price</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </form>
+
+
+
+{% endblock %}
+
+
+{% block endscript %}
+<script type="text/javascript" src="{% static '/js/calculate.js' %}"></script>
 {% endblock %}

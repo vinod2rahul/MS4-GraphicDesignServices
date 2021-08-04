@@ -12,6 +12,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 from django.views import View
+from django.utils import timezone
 import datetime
 import re
 import stripe
@@ -127,7 +128,8 @@ def getdesignsbyid(request, design_id):
     orders = Order.objects.all().filter(user=username)
     is_paid = False
     for order in orders:
-        if order.id == int(design_id):
+        print(order.design_id)
+        if order.design_id == int(design_id):
             is_paid = True
             break
     return render(request, 'single_design.html', {
@@ -156,6 +158,26 @@ def PaymentCanceled(request):
     return redirect('dashboard')
 
 
+@csrf_exempt
+def calculatePrice(request):
+    categories = {
+        "icon": 2,
+        "poster": 3,
+        "logo": 5
+    }
+    price_of_each_px = 3
+    if(request.method == "POST"):
+        category = request.POST['category']
+        size = int(request.POST['size'])
+        totalPrice = price_of_each_px * size * categories[category]
+        return JsonResponse({
+            "price_per_each_px": price_of_each_px,
+            "desired_size": size,
+            "category_price": categories[category],
+            "totalPrice": totalPrice
+        })
+
+
 class CreateCheckOutSessionView(View):
     def post(self, request, *args, **kwargs):
         design = Design.objects.get(id=request.POST['order_id'])
@@ -175,7 +197,8 @@ class CreateCheckOutSessionView(View):
                 }],
             metadata={
                 "design_id": design.id,
-                "username": request.user
+                "username": request.user,
+                "price": design.price
             },
             mode='payment',
             success_url=YOUR_DOMAIN + '/success',
@@ -189,6 +212,7 @@ class CreateOrderCheckOutSessionView(View):
         size = request.POST['size']
         category = request.POST['cat']
         description = request.POST['desc']
+        price = request.POST['price']
         if len(size) > 0 and len(category) > 0 and len(description) > 0:
             YOUR_DOMAIN = "http://127.0.0.1:8000"
             checkout_session = stripe.checkout.Session.create(
@@ -200,7 +224,7 @@ class CreateOrderCheckOutSessionView(View):
                             'product_data': {
                                 'name': category,
                             },
-                            'unit_amount': 250,
+                            'unit_amount': price,
                         },
                         'quantity': 1,
                     }],
@@ -208,7 +232,8 @@ class CreateOrderCheckOutSessionView(View):
                     "design_id": 5,
                     "username": request.user,
                     "size": size,
-                    "description": description
+                    "description": description,
+                    "price": price
                 },
                 mode='payment',
                 success_url=YOUR_DOMAIN + '/success',
@@ -249,22 +274,27 @@ def stripe_webhook(request):
         design_id = session["metadata"]["design_id"]
         username = session["metadata"]["username"]
         size = 0
+        price = 0
         description = "This is Description"
         if session["metadata"].get("size") is not None:
             size = session["metadata"].get("size")
+        if session["metadata"].get("price") is not None:
+            price = int(session["metadata"].get("price"))
         if session["metadata"].get("description") is not None:
             description = session["metadata"].get("description")
         design = Design.objects.get(id=design_id)
-        order = Order()
-        order.category = design.category
+
         user = User.objects.get(username=username)
-        order.user = user
-        order.size = size
-        order.description = description
-        order.design_id = design.id
-        order.price = design.price
-        order.is_paid = True
-        order.paid_at = datetime.datetime.now()
+        order = Order(
+            category=design.category,
+            user=user,
+            size=size,
+            description=description,
+            design_id=design.id,
+            price=price,
+            is_paid=True,
+            paid_at=datetime.datetime.now()
+        )
         order.save()
     # Passed signature verification
     return HttpResponse(status=200)
