@@ -128,7 +128,6 @@ def getdesignsbyid(request, design_id):
     orders = Order.objects.all().filter(user=username)
     is_paid = False
     for order in orders:
-        print(order.design_id)
         if order.design_id == int(design_id):
             is_paid = True
             break
@@ -187,7 +186,7 @@ class CreateCheckOutSessionView(View):
             line_items=[
                 {
                     'price_data': {
-                        'currency': 'usd',
+                        'currency': 'eur',
                         'product_data': {
                             'name': design.category,
                         },
@@ -220,7 +219,7 @@ class CreateOrderCheckOutSessionView(View):
                 line_items=[
                     {
                         'price_data': {
-                            'currency': 'usd',
+                            'currency': 'eur',
                             'product_data': {
                                 'name': category,
                             },
