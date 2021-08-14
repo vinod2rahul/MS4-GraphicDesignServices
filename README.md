@@ -1,6 +1,7 @@
 # Graphic Design Services
 
 Milestone four project: Full Stack Frameworks with Django - Code Institute
+
 This is a full stack site that allows users to manage and order a dataset about particular domain. This project highlights convinient access to the set of graphic designs, it also suppors all CRUD operations, a dashboard page that gives all graphic designs available with the site.
 
 ## Menu Page
@@ -21,7 +22,7 @@ My goal in the design was to make it as easy as possible to access information o
 
 ## Scope
 
-For users, I wanted to provide a brief overview of all designs within my site, also create new orders if have any, which will be later uploaded by admin. This way, many other members of the community get a glimpse about designs that they can order for and enjoy their weekends and party's, with average price in the market so they can plan for order.
+For users, I wanted to provide a brief overview of all designs within my site, also create new orders if have any, which will be later uploaded by admin. This way, many other members of the community get a glimpse about designs that they can order for and enjoy their time, with average price in the market so they can plan for order.
 
 ## Structure
 
@@ -52,7 +53,7 @@ This site allows users to register and order designs
 
 # 2. Access
 
-Every user will be provided with complete information about all designs available that was shared by a admin
+Every user will be provided with complete information about all designs available that was shared by an admin
 
 # 3. Order
 
@@ -60,7 +61,7 @@ Every registered User will be able to order a design based on their needs
 
 # 4. Search
 
-Users will be able to filter the designs based on their categories for quick and efficient access
+Users will be able to filter the designs based on the design categories for quick and efficient access
 
 # 5. Making Payments
 
@@ -70,11 +71,11 @@ After ordering users will be taken to the payment page on which if purchased adm
 
 # 1. Create
 
-Site Owner will be able to add a user, add a design based on order
+Site Owner will be able to add a user, add a design based on orders
 
 # 2. Edit
 
-Site owner will be able to modify any information which is either related to user, order or designs
+Site owner will be able to modify any information which is either related to user, orders or designs
 
 # 3. Delete
 
@@ -86,11 +87,13 @@ Site Owner will be provided with the complete information and super access
 
 ## Testing
 
-The user and site owner achieved the intended outcome of providing them with a showcase of data. In the dashboard section, they can quickly check usefull information of a designs like image, category, seller and price, link which takes to that single design page for full information. They are able to see all list of designs via cards in dashboard section. They are also able to check appropriate error or success messages as an acknowledgement. They are also able to order data specific to a category. The application is also made responsive for a modern feel.
+The user and site owner achieved the intended outcome of providing them with a showcase of data. In the dashboard section, they can quickly check usefull information of a designs like image, category, seller and price, link which takes to that single design page for more information. They are able to see all list of designs via cards in dashboard section. They are also able to check appropriate error or success messages as an acknowledgement. They are also able to order data specific to a category. The application is also made responsive for a modern feel.
 
 ## Deployment
 
 To run locally you can clone this repository directly into the editor of your choice by pasting git clone https://github.com/vinod2rahul/MS4-GraphicDesignServices.git into your terminal.
+
+Rename the .env.example to .env and configure the keys
 
 switch to graphic-design folder and Use command python manage.py runserver to run app locally a port 8000.
 

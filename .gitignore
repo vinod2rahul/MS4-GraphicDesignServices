@@ -1,9 +1,9 @@
 core.Microsoft*
 core.mongo*
-core.python*
 env.py
+core.python*
 __pycache__/
 *.py[cod]
-node_modules/
 .env
+node_modules/
 graphic-design/.envdebug.log
